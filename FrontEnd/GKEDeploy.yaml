@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworld-frontend-service #name of the service, must be DNS compliant
+  labels:
+    service: HelloWorld #label in the service
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: HelloWorld
+    tier: frontend
+  type: LoadBalancer
+---  
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld #name on the pods, must be DNS compliant
+  labels:
+    app: HelloWorld #label on the Deployment/workload - all the podes
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: HelloWorld
+      tier: frontend 
+  template:
+    metadata:
+      labels:
+        app: HelloWorld #label on the Deployment/workload - all the podes
+        tier: frontend
+    spec:
+      containers:
+      - image: us.gcr.io/exemplary-tide-208514/helloworld-frontend-image:latest
+        name: backend-service #name on the container in the pod, must be DNS compliant
+        ports:
+            - containerPort: 80 #port exposed on the container's host
